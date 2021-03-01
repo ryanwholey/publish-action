@@ -2,6 +2,11 @@ name: Trigger Harbormaster Deployment
 description: Triggers a Harbormaster deployment
 author: TakeScoop
 
+inputs:
+  sonar_url:
+    description: SONAR URL
+    required: false
+    default: https://sonar.takescoop.com
 runs:
   using: docker
   image: Dockerfile

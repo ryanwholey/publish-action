@@ -1,0 +1,7 @@
+name: Trigger Harbormaster Deployment
+description: Triggers a Harbormaster deployment
+author: TakeScoop
+
+runs:
+  using: docker
+  image: Dockerfile

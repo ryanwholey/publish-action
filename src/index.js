@@ -13,6 +13,7 @@ async function formatSonarCredentials(credentials) {
   // load github event
   const event = await loadGithubEventFile(process.env.GITHUB_EVENT_PATH)
   console.log(event)
+  console.log(process.env)
   
   // // check if trigger matches
   // if (!event.comment.body.startsWith(process.env.INPUT_TRIGGER)) {

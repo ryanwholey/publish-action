@@ -20,13 +20,13 @@ async function formatSonarCredentials(credentials) {
   // console.log(process.env)
   
   const trigger = core.getInput("trigger", { required: true })
-  const body = context.payload.pull_request.body
+  // const body = context.payload.pull_request.body
   console.log('trigger', trigger)
-  console.log('body', body)
-  const client = new GitHub(GITHUB_TOKEN)
+  // console.log('body', body)
+  const client = new GitHub(process.env.GITHUB_TOKEN)
 
   console.log(process.env)
-  console.log(context)
+  console.log('context', context)
   console.log(client)
   // // check if trigger matches
   // if (!event.comment.body.startsWith(process.env.INPUT_TRIGGER)) {

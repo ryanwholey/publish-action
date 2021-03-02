@@ -13,7 +13,7 @@ class Client {
       const environments = await axios({
         url:`${this.url}/environments`,
         headers: {
-          Authorization: this.credentials
+          Authorization: `Bearer ${this.credentials}`,
         }
       })
       return name ? environments.data.find((env) => env.name === name) : environments.data
@@ -21,8 +21,8 @@ class Client {
   }
 
   packages = {
-    post: async () => {
-      console.log(this.url)
+    post: async (props) => {
+      console.log(props)
     },
   }
 

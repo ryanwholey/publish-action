@@ -23,7 +23,7 @@ async function formatSonarCredentials(credentials) {
   // const body = context.payload.pull_request.body
   console.log('trigger', trigger)
   // console.log('body', body)
-  const client = new GitHub(process.env.GITHUB_TOKEN)
+  // const client = new GitHub(process.env.GITHUB_TOKEN)
 
   console.log(process.env)
   console.log('context', context)

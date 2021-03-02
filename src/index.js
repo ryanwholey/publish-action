@@ -28,6 +28,7 @@ async function getAccessToken(accountConfig) {
   }
 
   // check if circle build is done
+  console.log(core.getInput('sonar_credentials', { required: true }))
 
   // create sonar client
   const client = new Client({

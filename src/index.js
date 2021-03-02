@@ -36,7 +36,7 @@ async function formatSonarCredentials(credentials) {
   // }
 
 
-  console.log(fs.readdirSync(process.env.GITHUB_WORKSPACE))
+  console.log(fs.readFileSync(`${process.env.GITHUB_WORKSPACE}/.scoop/app.yaml`))
 
   // create and POST package
 

@@ -1,5 +1,8 @@
 const fs = require('fs')
 const Client = require('./lib/client')
+const core = require("@actions/core");
+const { context, GitHub } = require("@actions/github");
+
 
 async function loadGithubEventFile(path) {
   return JSON.parse(await fs.promises.readFile(path))
@@ -11,10 +14,20 @@ async function formatSonarCredentials(credentials) {
 
 ;(async () => {
   // load github event
-  const event = await loadGithubEventFile(process.env.GITHUB_EVENT_PATH)
-  console.log(event)
-  console.log(process.env)
+
+  // const event = await loadGithubEventFile(process.env.GITHUB_EVENT_PATH)
+  // console.log(event)
+  // console.log(process.env)
   
+  const trigger = core.getInput("trigger", { required: true })
+  const body = context.payload.pull_request.body
+  console.log('trigger', trigger)
+  console.log('body', body)
+  const client = new GitHub(GITHUB_TOKEN)
+
+  console.log(process.env)
+  console.log(context)
+  console.log(client)
   // // check if trigger matches
   // if (!event.comment.body.startsWith(process.env.INPUT_TRIGGER)) {
   //   console.log('Comment does not match the trigger, exiting.')

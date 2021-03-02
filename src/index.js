@@ -27,18 +27,15 @@ async function getAccessToken(accountConfig) {
     return
   }
 
-  // check if circle build is done
-  console.log(process.env.SONAR_CREDENTIALS)
-
   // create sonar client
   const client = new Client({
-    url: core.getInput('sonar_url', { required: true }),
+    url: core.getInput('sonar_url'),
     token: await getAccessToken(process.env.SONAR_CREDENTIALS),
   })
   
   // validate environment
   const [, environmentName = core.getInput('default_environment')] = context.payload.comment.body.split(' ').filter(i => !!i)
-  const environment = await client.environments.get({ name: environmentName })
+  const [environment] = await client.environments.get({ name: environmentName })
   
   if (!environment) {
     throw new Error(`Environment ${environment.name} not found`)
@@ -52,7 +49,8 @@ async function getAccessToken(accountConfig) {
     metadata: {
       ciBuildUrl: `${core.getInput('default_ci_url_prefix')}${context.payload.repository.full_name}`,
       commitUrl: context.payload.issue.pull_request.html_url,
-    }
+    },
+    branch: core.getInput('branch'),
   })
 
   // POST release

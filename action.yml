@@ -22,6 +22,9 @@ inputs:
   ref:
     description: Pull request SHA
     required: true
+  branch:
+    description: Pull request branch
+    required: true
 runs:
   using: docker
   image: Dockerfile

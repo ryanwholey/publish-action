@@ -25,6 +25,9 @@ class Client {
   packages = {
     post: async (props) => {
       console.log(props)
+      return {
+        id: '12345',
+      }
     },
   }
 

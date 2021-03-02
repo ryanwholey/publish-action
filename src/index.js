@@ -23,26 +23,31 @@ async function formatSonarCredentials(credentials) {
   })
   
   // validate environment
-  const [, envName = core.getInput('default_environment')] = context.payload.comment.body.split(' ').filter(i => !!i)
-  const environment = await client.environments.get({ name: envName })
+  const [, environmentName = core.getInput('default_environment')] = context.payload.comment.body.split(' ').filter(i => !!i)
+  const environment = await client.environments.get({ name: environmentName })
   
   if (!environment) {
     throw new Error(`Environment ${environment.name} not found`)
   }
 
-  console.log('process.env.GITHUB_SHA',process.env.GITHUB_SHA)
-  console.log('core.getInput(ref)', core.getInput('ref'))
+  console.log(context.payload.issue.pull_request)
 
   // POST package
   const package = await client.packages.post({
     appManifest: yaml.load(fs.readFileSync(`${process.env.GITHUB_WORKSPACE}/.scoop/app.yaml`, 'utf8')),
-    commitTime: '2016-02-23T07:23:07.192Z',
+    commitTime: context.payload.comment.created_at,
     version: `${core.getInput('ref')}-test`,
     metadata: {
-      ciBuildUrl: `${core.getInput('default_ci_url_prefix')}/${context.payload.repository.name}`,
+      ciBuildUrl: `${core.getInput('default_ci_url_prefix')}/${context.payload.repository.full_name}`,
       commitUrl: context.payload.issue.html_url,
     }
   })
 
   // POST release
+  await client.releases.post({
+    packageId: package.id,
+    environmentName,
+    type: 'promote',
+    overrideWorkflow: true,
+  })
 })()

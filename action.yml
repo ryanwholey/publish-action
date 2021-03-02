@@ -22,6 +22,9 @@ inputs:
   ref:
     description: Pull request SHA
     required: true
+  sonar_credentials:
+    description: SONAR credentials
+    required: true
 runs:
   using: docker
   image: Dockerfile

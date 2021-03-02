@@ -1,12 +1,21 @@
-name: Trigger Harbormaster Deployment
-description: Triggers a Harbormaster deployment
+name: Trigger SONAR Deployment
+description: Triggers a SONAR deployment
 author: TakeScoop
 
 inputs:
   sonar_url:
     description: SONAR URL
     required: false
-    default: https://sonar.takescoop.com
+    default: https://takescoop.com
+  trigger:
+    description: String to match the comment against to decide whether to take action
+    required: false
+    default: /deploy
+  default_environment:
+    description: Default environment to deploy to
+    required: false
+    default: staging
+
 runs:
   using: docker
   image: Dockerfile

@@ -22,6 +22,7 @@ class Client {
 
   packages = {
     post: async (props) => {
+      console.log(props)
       return {id: '12345'}
       return await axios({
         url:`${this.url}/packages`,
@@ -34,6 +35,7 @@ class Client {
 
   releases = {
     post: async (props) => {
+      console.log(props)
       return {}
       return await axios({
         url:`${this.url}/releases`,

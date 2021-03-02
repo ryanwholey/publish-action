@@ -1,11 +1,24 @@
-const fs = require('fs')
 const Client = require('./lib/client')
+
+const fs = require('fs')
 const core = require('@actions/core')
 const { context } = require('@actions/github')
 const yaml = require('js-yaml')
+const { JWT } = require('google-auth-library')
 
-async function formatSonarCredentials(credentials) {
-  return credentials
+async function getAccessToken(accountConfig) {
+  const serviceKeys = JSON.parse(accountConfig)
+
+  const client = new JWT(
+    serviceKeys.client_email,
+    null,
+    serviceKeys.private_key,
+    ['https://www.googleapis.com/auth/cloud-platform'],
+  )
+
+  const { token } = await client.getAccessToken()
+
+  return token
 }
 
 ;(async () => {
@@ -16,10 +29,10 @@ async function formatSonarCredentials(credentials) {
 
   // check if circle build is done
 
-  // // create sonar client
+  // create sonar client
   const client = new Client({
     url: core.getInput('sonar_url', { required: true }),
-    credentials: process.env.SONAR_CREDENTIALS,
+    token: await getAccessToken(core.getInput('sonar_credentials', { required: true })),
   })
   
   // validate environment
@@ -30,16 +43,14 @@ async function formatSonarCredentials(credentials) {
     throw new Error(`Environment ${environment.name} not found`)
   }
 
-  console.log(context.payload.issue.pull_request)
-
   // POST package
   const package = await client.packages.post({
-    appManifest: yaml.load(fs.readFileSync(`${process.env.GITHUB_WORKSPACE}/.scoop/app.yaml`, 'utf8')),
+    appManifest: yaml.load(await fs.promises.readFile(`${process.env.GITHUB_WORKSPACE}/.scoop/app.yaml`, 'utf8')),
     commitTime: context.payload.comment.created_at,
     version: `${core.getInput('ref')}-test`,
     metadata: {
-      ciBuildUrl: `${core.getInput('default_ci_url_prefix')}/${context.payload.repository.full_name}`,
-      commitUrl: context.payload.issue.html_url,
+      ciBuildUrl: `${core.getInput('default_ci_url_prefix')}${context.payload.repository.full_name}`,
+      commitUrl: context.payload.issue.pull_request.html_url,
     }
   })
 

@@ -3,14 +3,19 @@
 const axios = require('axios')
 
 class Client {
-  constructor({ url, credentials }) {
+  constructor({ url, token }) {
     this.url = url
-    this.credentials = credentials
+    this.token = token
   }
 
   environments = {
     get: async ({ name }) => {
-      console.log({ name })
+      console.log({
+        url:`${this.url}/environments`,
+        headers: {
+          Authorization: `Bearer ${this.credentials}`,
+        }
+      })
       return [{ name }]
       const environments = await axios({
         url:`${this.url}/environments`,

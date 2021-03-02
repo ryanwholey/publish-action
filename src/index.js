@@ -1,4 +1,4 @@
-const Client = require('./lib/client')
+const Harbormaster = require('./lib/harbormaster')
 
 const fs = require('fs')
 const core = require('@actions/core')
@@ -6,8 +6,8 @@ const { context } = require('@actions/github')
 const yaml = require('js-yaml')
 const { JWT } = require('google-auth-library')
 
-async function getAccessToken(accountConfig) {
-  const serviceKeys = JSON.parse(Buffer.from(accountConfig, 'base64').toString('utf-8'))
+async function getAccessToken(accountConfigBase64) {
+  const serviceKeys = JSON.parse(Buffer.from(accountConfigBase64, 'base64').toString('utf-8'))
 
   const client = new JWT(
     serviceKeys.client_email,
@@ -21,40 +21,39 @@ async function getAccessToken(accountConfig) {
   return token
 }
 
-;(async () => {
-  if (!context.payload.comment.body.startsWith(core.getInput('trigger', { required: true }))) {
+(async function main() {
+  if (!context.payload.comment.body.startsWith(core.getInput('trigger'))) {
     console.log('Comment does not match the trigger, exiting.')
     return
   }
 
-  // create sonar client
-  const client = new Client({
+  const harbormaster = new Harbormaster({
     url: core.getInput('sonar_url'),
     token: await getAccessToken(process.env.SONAR_CREDENTIALS),
   })
   
-  // validate environment
   const [, environmentName = core.getInput('default_environment')] = context.payload.comment.body.split(' ').filter(i => !!i)
-  const [environment] = await client.environments.get({ name: environmentName })
+  const [environment] = await harbormaster.environments.get({
+    name: environmentName
+  })
   
   if (!environment) {
-    throw new Error(`Environment ${environment.name} not found`)
+    core.setFailed(`Environment ${environment.name} not found`)
+    return
   }
 
-  // POST package
-  const package = await client.packages.post({
+  const package = await harbormaster.packages.post({
     appManifest: yaml.load(await fs.promises.readFile(`${process.env.GITHUB_WORKSPACE}/.scoop/app.yaml`, 'utf8')),
     commitTime: context.payload.comment.created_at,
     version: `${core.getInput('ref')}-test`,
     metadata: {
-      ciBuildUrl: `${core.getInput('default_ci_url_prefix')}${context.payload.repository.full_name}`,
+      ciBuildUrl: `${core.getInput('ci_url_prefix')}${context.payload.repository.full_name}`,
       commitUrl: context.payload.issue.pull_request.html_url,
     },
     branch: core.getInput('branch'),
   })
 
-  // POST release
-  await client.releases.post({
+  await harbormaster.releases.post({
     packageId: package.id,
     environmentName,
     type: 'promote',

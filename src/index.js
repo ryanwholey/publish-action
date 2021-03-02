@@ -4,13 +4,11 @@ const publish = require('./publish')
 
 
 async function main() {
-  
   const harbormaster = new Harbormaster({
     url: core.getInput('sonar_url'),
-    token: await Harbormaster.getServiceAccountToken({
-      clientEmail: core.getInput('client_email'),
-      privateKey: core.getInput('private_key'),
-    }),
+    token: await Harbormaster.getServiceAccountToken(
+      JSON.parse(Buffer.from(process.env.SONAR_CREDENTIALS, 'base64').toString('utf-8'))
+    ),
   })
   
   publish(harbormaster)  

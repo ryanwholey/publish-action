@@ -2,6 +2,7 @@ const fs = require('fs')
 const Client = require('./lib/client')
 const core = require('@actions/core')
 const { context } = require('@actions/github')
+const yaml = require('js-yaml')
 
 async function formatSonarCredentials(credentials) {
   return credentials
@@ -29,14 +30,14 @@ async function formatSonarCredentials(credentials) {
     throw new Error(`Environment ${environment.name} not found`)
   }
 
-  console.log(process.env.GITHUB_SHA)
-  console.log(core.getInput('ref'))
+  console.log('process.env.GITHUB_SHA',process.env.GITHUB_SHA)
+  console.log('core.getInput(ref)', core.getInput('ref'))
 
   // POST package
   const package = await client.packages.post({
     appManifest: yaml.load(fs.readFileSync(`${process.env.GITHUB_WORKSPACE}/.scoop/app.yaml`, 'utf8')),
     commitTime: '2016-02-23T07:23:07.192Z',
-    version: `${core.getInput('pull_request_ref')}-test`,
+    version: `${core.getInput('ref')}-test`,
     metadata: {
       ciBuildUrl: `${core.getInput('default_ci_url_prefix')}/${context.payload.repository.name}`,
       commitUrl: context.payload.issue.html_url,

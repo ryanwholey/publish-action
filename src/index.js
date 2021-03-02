@@ -28,12 +28,12 @@ async function getAccessToken(accountConfig) {
   }
 
   // check if circle build is done
-  console.log(core.getInput('sonar_credentials', { required: true }))
+  console.log(process.env.SONAR_CREDENTIALS)
 
   // create sonar client
   const client = new Client({
     url: core.getInput('sonar_url', { required: true }),
-    token: await getAccessToken(core.getInput('sonar_credentials', { required: true })),
+    token: await getAccessToken(process.env.SONAR_CREDENTIALS),
   })
   
   // validate environment

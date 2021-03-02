@@ -23,6 +23,8 @@ class Client {
 
   environments = {
     get: async ({ name }) => {
+      console.log({name})
+      return [{name}]
       const environments = await axios({
         url:`${this.url}/environments`,
         headers: { Authorization: `Bearer ${this.token}` },
@@ -33,21 +35,29 @@ class Client {
   }
 
   packages = {
-    post: async (props) => (await axios({
-      url: `${this.url}/packages?appName=${props.appManifest.app.name}`,
-      headers: { Authorization: `Bearer ${this.token}` },
-      method: 'post',
-      data: props,
-    })).data
+    post: async (props) => {
+      console.log(props)
+      return {id: '12345'}
+      return (await axios({
+        url: `${this.url}/packages?appName=${props.appManifest.app.name}`,
+        headers: { Authorization: `Bearer ${this.token}` },
+        method: 'post',
+        data: props,
+      })).data
+    }
   }
 
   releases = {
-    post: async (props) => (await axios({
-      url:`${this.url}/releases`,
-      headers: { Authorization: `Bearer ${this.token}` },
-      method: 'post',
-      data: props,
-    })).data
+    post: async (props) => {
+      console.log(props)
+      return {}
+      (await axios({
+        url:`${this.url}/releases`,
+        headers: { Authorization: `Bearer ${this.token}` },
+        method: 'post',
+        data: props,
+      })).data
+    }
   }
 }
 

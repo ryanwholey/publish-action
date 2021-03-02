@@ -7,7 +7,7 @@ const yaml = require('js-yaml')
 const { JWT } = require('google-auth-library')
 
 async function getAccessToken(accountConfig) {
-  const serviceKeys = JSON.parse(accountConfig)
+  const serviceKeys = JSON.parse(Buffer.from(accountConfig, 'base64').toString('utf-8'))
 
   const client = new JWT(
     serviceKeys.client_email,

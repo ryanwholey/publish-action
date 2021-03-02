@@ -10,6 +10,8 @@ class Client {
 
   environments = {
     get: async ({ name }) => {
+      console.log({ name })
+      return [{ name }]
       const environments = await axios({
         url:`${this.url}/environments`,
         headers: {

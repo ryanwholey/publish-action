@@ -5,6 +5,6 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --quiet
 
-COPY ./src ./src
+COPY ./src ./
 
 CMD ["node", "src/index.js"]

@@ -13,12 +13,6 @@ inputs:
     description: SONAR URL
     required: false
     default: https://takescoop.com
-  client_email:
-    description: OpenId client email
-    required: true
-  private_key:
-    description: OpenId private key
-    required: true
   trigger:
     description: String to match the comment against to decide whether to take action
     required: false

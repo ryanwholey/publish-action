@@ -34,7 +34,7 @@ async function publish (harbormaster) {
       version: `${core.getInput('ref')}-test`,
       metadata: {
         ciBuildUrl: `${core.getInput('ci_url_prefix')}${context.payload.repository.full_name}`,
-        commitUrl: context.payload.issue.pull_request.html_url
+        commitUrl: `${context.payload.repository.html_url}/commit/${core.getInput('ref')}`,
       },
       branch: core.getInput('branch')
     })
